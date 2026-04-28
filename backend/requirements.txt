@@ -1,0 +1,9 @@
+fastapi[all]
+pydantic-settings
+celery
+redis
+SQLAlchemy
+psycopg2-binary
+google-generativeai
+python-dotenv
+mcp

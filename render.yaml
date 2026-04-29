@@ -1,6 +1,3 @@
-previews:
-  - redis
-
 databases:
   - name: xaimedrisk-db
     databaseName: xaimedrisk

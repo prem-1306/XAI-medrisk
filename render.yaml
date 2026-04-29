@@ -62,3 +62,19 @@ services:
           property: connectionString
       - key: GEMINI_API_KEY
         sync: false
+  - type: web
+    name: xaimedrisk-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend-react && npm install && npm run build
+    staticPublishPath: ./frontend-react/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: xaimedrisk-api
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

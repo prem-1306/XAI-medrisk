@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAI-MedRisk Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981; /* Mint Green */
+            --primary-hover: #059669;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: var(--surface);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input View */
+        .input-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            resize: none;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+            margin-bottom: 24px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Loading View */
+        .loading-view {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Result View */
+        .result-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        
+        .explanation {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+        
+        .shap-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .shap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .shap-bar-container {
+            flex: 1;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin: 0 12px;
+            overflow: hidden;
+        }
+        
+        .shap-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Error View */
+        .error-view {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            color: var(--error);
+            margin-bottom: 16px;
+        }
+        
+        .error-text {
+            color: var(--error);
+            margin-bottom: 24px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>XAI-MedRisk</h1>
+        <p>AI Health Assistant & Predictor</p>
+    </div>
+
+    <div class="content">
+        <!-- Input Screen -->
+        <div id="view-input" class="view active">
+            <div class="input-group">
+                <label for="symptoms">Describe your symptoms in detail:</label>
+                <textarea id="symptoms" placeholder="E.g., I've been feeling very tired lately, with a mild headache and occasional dizziness. I also have a slight fever..."></textarea>
+            </div>
+            <button id="btn-analyze" onclick="startAnalysis()">Analyze Symptoms</button>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="view-loading" class="view loading-view">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing your symptoms...</div>
+            <div class="loading-subtext" id="loading-status">Connecting to AI models</div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="view-result" class="view">
+            <div class="result-card">
+                <div class="score-row">
+                    <div class="score-item">
+                        <div class="score-value" id="risk-score">--</div>
+                        <div class="score-label">Risk Score</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-value" id="confidence-score">--</div>
+                        <div class="score-label">Confidence</div>
+                    </div>
+                </div>
+                
+                <div class="explanation" id="human-explanation">
+                    <!-- AI Explanation goes here -->
+                </div>
+            </div>
+            
+            <div class="shap-container" id="shap-container">
+                <div class="shap-title">Key Risk Factors Identified (XAI)</div>
+                <!-- SHAP values will be injected here -->
+            </div>
+            
+            <div style="margin-top: auto; padding-top: 24px;">
+                <button onclick="resetFlow()" style="background: var(--text-main);">Start New Analysis</button>
+            </div>
+        </div>
+
+        <!-- Error Screen -->
+        <div id="view-error" class="view error-view">
+            <div class="error-icon">⚠️</div>
+            <div class="error-text" id="error-message">Something went wrong.</div>
+            <button onclick="resetFlow()">Try Again</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8000/api/v1';
+    let pollInterval;
+
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+    }
+
+    function resetFlow() {
+        clearInterval(pollInterval);
+        document.getElementById('symptoms').value = '';
+        showView('input');
+    }
+
+    async function startAnalysis() {
+        const textInput = document.getElementById('symptoms').value.trim();
+        
+        if (!textInput) {
+            alert('Please describe your symptoms first.');
+            return;
+        }
+
+        showView('loading');
+        document.getElementById('loading-status').innerText = 'Submitting task...';
+
+        try {
+            // 1. Call /predict/async
+            const response = await fetch(`${API_BASE}/predict/async`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: 'local_user_001',
+                    text_input: textInput
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to start analysis');
+
+            const data = await response.json();
+            const taskId = data.task_id;
+            
+            // 2. Poll /tasks/{id}
+            pollTaskStatus(taskId);
+
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Unable to connect to the backend API. Make sure it is running on http://localhost:8000');
+        }
+    }
+
+    function pollTaskStatus(taskId) {
+        document.getElementById('loading-status').innerText = 'AI processing in background...';
+        
+        let attempts = 0;
+        const maxAttempts = 30; // 30 attempts * 2 seconds = 60s timeout
+
+        pollInterval = setInterval(async () => {
+            attempts++;
+            
+            if (attempts > maxAttempts) {
+                clearInterval(pollInterval);
+                showError('Task timed out. The server took too long to respond.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${taskId}`);
+                if (!response.ok) throw new Error('Polling failed');
+                
+                const data = await response.json();
+                
+                if (data.status === 'completed' || data.status === 'success') {
+                    clearInterval(pollInterval);
+                    displayResult(data.result);
+                } else if (data.status === 'failed') {
+                    clearInterval(pollInterval);
+                    showError('Analysis failed. The AI encountered an error.');
+                }
+                
+            } catch (error) {
+                console.error('Polling error:', error);
+                // We don't stop polling on single fetch failure, could be temporary network hiccup
+            }
+        }, 2000);
+    }
+
+    function displayResult(result) {
+        // Parse the result object (handles potential variations in backend output)
+        const prediction = result.prediction || result;
+        
+        // Ensure values exist
+        const riskScore = prediction.risk_score || prediction.risk_probability || 'N/A';
+        const confidence = prediction.confidence || '95%';
+        const explanation = prediction.human_readable_explanation || prediction.human_explanation || 'Analysis complete, but no explanation was provided.';
+        const shapValues = prediction.shap_values || {};
+
+        document.getElementById('risk-score').innerText = typeof riskScore === 'number' ? `${(riskScore * 100).toFixed(1)}%` : riskScore;
+        document.getElementById('confidence-score').innerText = typeof confidence === 'number' ? `${(confidence * 100).toFixed(1)}%` : confidence;
+        document.getElementById('human-explanation').innerText = explanation;
+
+        // Render SHAP values
+        const shapContainer = document.getElementById('shap-container');
+        // Clear previous SHAP values (keep title)
+        shapContainer.innerHTML = '<div class="shap-title">Key Risk Factors Identified (XAI)</div>';
+        
+        const shapKeys = Object.keys(shapValues);
+        if (shapKeys.length > 0) {
+            // Find max value for scaling
+            const maxVal = Math.max(...Object.values(shapValues).map(Math.abs));
+            
+            shapKeys.forEach(feature => {
+                const value = shapValues[feature];
+                const width = Math.min(100, (Math.abs(value) / maxVal) * 100);
+                
+                const shapItem = document.createElement('div');
+                shapItem.className = 'shap-item';
+                shapItem.innerHTML = `
+                    <div style="width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${feature}</div>
+                    <div class="shap-bar-container">
+                        <div class="shap-bar" style="width: ${width}%; background-color: ${value >= 0 ? 'var(--error)' : 'var(--primary)'}"></div>
+                    </div>
+                    <div style="width: 40px; text-align: right;">${value.toFixed(2)}</div>
+                `;
+                shapContainer.appendChild(shapItem);
+            });
+        } else {
+            const noShap = document.createElement('div');
+            noShap.innerText = "No specific factors identified.";
+            noShap.style.color = "var(--text-light)";
+            noShap.style.fontSize = "0.9rem";
+            shapContainer.appendChild(noShap);
+        }
+
+        showView('result');
+    }
+
+    function showError(message) {
+        document.getElementById('error-message').innerText = message;
+        showView('error');
+    }
+</script>
+
+</body>
+</html>

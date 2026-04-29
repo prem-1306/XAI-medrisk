@@ -44,7 +44,7 @@ services:
         fromService:
           type: web
           name: xaimedrisk-api
-          property: host
+          property: url
     routes:
       - type: rewrite
         source: /*

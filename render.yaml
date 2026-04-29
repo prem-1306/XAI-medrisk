@@ -62,7 +62,6 @@ services:
   - type: web
     name: xaimedrisk-frontend
     env: static
-    plan: free
     buildCommand: cd frontend-react && npm install && npm run build
     staticPublishPath: ./frontend-react/dist
     envVars:

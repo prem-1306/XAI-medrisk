@@ -1,3 +1,4 @@
+// Build trigger: fresh relative paths
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';

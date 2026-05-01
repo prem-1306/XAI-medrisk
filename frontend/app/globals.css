@@ -462,6 +462,44 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
+/* --- Login Page Architecture --- */
+.login-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
+  gap: 4rem;
+  align-items: center;
+  flex-direction: row;
+}
+
+.login-branding {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  text-align: left;
+}
+
+.login-title {
+  font-size: 3rem;
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+
+.login-subtitle {
+  font-size: 1.1rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 3rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border: 1px solid rgba(194, 198, 212, 0.3) !important;
+}
+
 /* --- Advanced Mobile Optimization --- */
 @media (max-width: 768px) {
   :root {
@@ -474,7 +512,7 @@ input:focus, select:focus, textarea:focus {
   }
 
   .main-content {
-    padding: 5rem 1rem 3rem; /* Tighter padding for mobile */
+    padding: 5rem 1rem 3rem; 
   }
 
   .nav-container {
@@ -491,13 +529,11 @@ input:focus, select:focus, textarea:focus {
     border-radius: var(--radius-lg) !important;
   }
 
-  /* Stack all grids */
   .grid-2, .grid-3, .analysis-grid, .explain-grid {
     grid-template-columns: 1fr !important;
     gap: 1.25rem !important;
   }
 
-  /* Full-width buttons on mobile for better ergonomics */
   .btn {
     width: 100%;
     padding: 1rem !important;
@@ -505,10 +541,39 @@ input:focus, select:focus, textarea:focus {
   }
 
   .nav-links .btn, .nav-brand .btn {
-    width: auto; /* Keep header buttons compact */
+    width: auto; 
   }
 
-  /* Specific fix for the explain page items */
+  /* Login Page Mobile Optimization */
+  .login-wrapper {
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    text-align: center !important;
+    padding: 0 1rem;
+  }
+
+  .login-branding {
+    text-align: center !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+  }
+
+  .login-title {
+    font-size: 2.25rem !important;
+    margin: 0 auto 0.75rem !important;
+  }
+
+  .login-subtitle {
+    margin: 0 auto !important;
+    font-size: 0.95rem !important;
+  }
+
+  .login-card {
+    padding: 2.5rem 1.5rem !important;
+    max-width: 100% !important;
+    gap: 1.5rem !important;
+  }
+
   .clinical-header {
     flex-direction: column !important;
     gap: 1rem !important;
@@ -526,7 +591,6 @@ input:focus, select:focus, textarea:focus {
     font-size: 1.125rem !important;
   }
 
-  /* Responsive Visualizer */
   .body-visualizer-container {
     padding: 1rem !important;
     min-height: 450px;
@@ -536,29 +600,8 @@ input:focus, select:focus, textarea:focus {
     height: 400px !important;
   }
 
-  /* Results bars padding */
   .shap-row {
     margin-bottom: 1rem;
-  }
-  /* Login Page Mobile Optimization */
-  .login-wrapper {
-    flex-direction: column !important;
-    gap: 2.5rem !important;
-    text-align: center !important;
-    --login-align: center;
-  }
-
-  .login-title {
-    font-size: 2.25rem !important;
-    margin: 0 auto 1rem !important;
-  }
-
-  .login-subtitle {
-    margin: 0 auto !important;
-  }
-
-  .login-card {
-    padding: 2rem 1.5rem !important;
   }
 }
 

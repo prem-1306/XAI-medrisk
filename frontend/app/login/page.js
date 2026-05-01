@@ -38,14 +38,7 @@ export default function LoginPage() {
         background: "var(--secondary)", opacity: 0.05, filter: "blur(80px)"
       }} />
 
-      <div className="login-wrapper" style={{ 
-        display: "flex", 
-        width: "100%", 
-        maxWidth: "1000px", 
-        gap: "3rem", 
-        alignItems: "center",
-        flexDirection: "var(--login-flex, row)" // Use a variable we'll control in CSS
-      }}>
+      <div className="login-wrapper">
 
         {/* Left Side - Branding */}
         <motion.div
@@ -53,14 +46,6 @@ export default function LoginPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
           className="login-branding"
-          style={{ 
-            flex: 1, 
-            display: "flex", 
-            flexDirection: "column", 
-            gap: "2rem",
-            alignItems: "var(--login-align, flex-start)",
-            textAlign: "var(--login-align, left)"
-          }}
         >
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
@@ -79,15 +64,15 @@ export default function LoginPage() {
 
           {/* Headline */}
           <div>
-            <h1 className="gradient-text login-title" style={{ fontSize: "2.75rem", lineHeight: 1.1, marginBottom: "1rem", fontWeight: 900 }}>
+            <h1 className="gradient-text login-title" style={{ fontWeight: 900 }}>
               Intelligent<br />Health Analysis
             </h1>
-            <p className="login-subtitle" style={{ fontSize: "1rem", color: "var(--on-surface-variant)", lineHeight: 1.6, maxWidth: "380px" }}>
+            <p className="login-subtitle" style={{ color: "var(--on-surface-variant)", lineHeight: 1.6, maxWidth: "380px" }}>
               AI-powered diagnostic insights with explainable clinical risk prediction.
             </p>
           </div>
 
-          {/* Feature Pills - Hide on small mobile to save space if needed, or keep for context */}
+          {/* Feature Pills */}
           <div className="hide-mobile" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {[
               { icon: <ShieldCheck size={16} />, text: "HIPAA-grade encrypted sessions" },
@@ -116,12 +101,6 @@ export default function LoginPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
           className="card login-card"
-          style={{
-            width: "100%", maxWidth: "420px", padding: "2.5rem",
-            display: "flex", flexDirection: "column", gap: "1.5rem",
-            border: "1px solid rgba(194, 198, 212, 0.3)",
-            boxShadow: "0 25px 50px -12px rgba(0, 72, 141, 0.1)"
-          }}
         >
           {/* Card Header */}
           <div style={{ textAlign: "center" }}>

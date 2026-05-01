@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Plus, Clock, Activity, Calendar, Zap, Shield, ChevronRight } from 'lucide-react';
-import { getHistory } from '@/lib/api';
+import { getHistory } from '../lib/api';
 
 export default function Dashboard() {
   const router = useRouter();

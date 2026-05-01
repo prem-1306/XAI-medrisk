@@ -1,5 +1,5 @@
 import "./globals.css";
-import MainWrapper from "@/components/MainWrapper";
+import MainWrapper from "../components/MainWrapper";
 
 export const metadata = {
   title: "XAI-MedRisk - AI Health Analysis",

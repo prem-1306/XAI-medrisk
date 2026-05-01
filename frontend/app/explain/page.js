@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Activity, ArrowLeft, Download, Info, Zap, AlertCircle, CheckCircle2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import BodyVisualizer from '@/components/BodyVisualizer';
+import BodyVisualizer from '../../components/BodyVisualizer';
 
 export default function ExplainableAI() {
   const router = useRouter();

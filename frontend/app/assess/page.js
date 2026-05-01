@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api';
+import { apiClient } from '../../lib/api';
 import { ChevronRight, ClipboardList, Info, Send, Sparkles, User, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

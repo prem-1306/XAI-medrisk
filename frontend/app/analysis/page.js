@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiClient, saveToHistory } from '@/lib/api';
+import { apiClient, saveToHistory } from '../../lib/api';
 import { ShieldCheck, Cpu, Scan, AlertCircle } from 'lucide-react';
-import BodyVisualizer from '@/components/BodyVisualizer';
+import BodyVisualizer from '../../components/BodyVisualizer';
 
 export default function Analysis() {
   const router = useRouter();

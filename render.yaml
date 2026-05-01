@@ -39,12 +39,7 @@ services:
     env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/out
-    envVars:
-      - key: NEXT_PUBLIC_API_BASE_URL
-        fromService:
-          type: web
-          name: xaimedrisk-api
-          property: url
+    envVars: []
     routes:
       - type: rewrite
         source: /*

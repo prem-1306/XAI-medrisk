@@ -118,7 +118,7 @@ export default function ExplainableAI() {
                 PROFESSIONAL ASSESSMENT
               </div>
               <div className="markdown-report" style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--on-surface)' }}>
-                <ReactMarkdown>{prediction.human_explanation}</ReactMarkdown>
+                <ReactMarkdown>{prediction.explanation || prediction.human_explanation}</ReactMarkdown>
               </div>
             </div>
           </motion.div>

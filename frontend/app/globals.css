@@ -540,6 +540,26 @@ input:focus, select:focus, textarea:focus {
   .shap-row {
     margin-bottom: 1rem;
   }
+  /* Login Page Mobile Optimization */
+  .login-wrapper {
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    text-align: center !important;
+    --login-align: center;
+  }
+
+  .login-title {
+    font-size: 2.25rem !important;
+    margin: 0 auto 1rem !important;
+  }
+
+  .login-subtitle {
+    margin: 0 auto !important;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem !important;
+  }
 }
 
 /* Extra small devices */

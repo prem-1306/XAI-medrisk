@@ -77,6 +77,18 @@ h1, h2, h3, h4 {
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    height: 64px;
+  }
+  .main-content {
+    padding-top: 5rem;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;

@@ -1,60 +1,67 @@
 import random
+import math
 
-def predict_risk(structured_features: dict) -> tuple[float, float]:
+def predict_multimodal_risk(structured_features: dict, nlp_sentiment_score: float = 0.5) -> tuple[float, float]:
     """
-    Simulated ML Model predicting risk score and confidence score.
-    Calculates risk based on age, symptoms, and lifestyle factors.
+    Multimodal ML Model that combines structured data (symptoms, age) 
+    with unstructured data (NLP sentiment/severity from textual descriptions).
     """
     risk_points = 0.0
     
-    # 1. Demographic Factors
+    # 1. Demographic Factors (Structured)
     age = structured_features.get("age", 30)
     if isinstance(age, str):
         try: age = int(age)
         except: age = 30
     
-    if age > 75: risk_points += 0.45
-    elif age > 60: risk_points += 0.30
-    elif age > 45: risk_points += 0.15
-    elif age < 18: risk_points += 0.05
+    # Sigmoid-like age weight
+    age_weight = 1 / (1 + math.exp(-0.08 * (age - 55))) 
+    risk_points += age_weight * 0.4
     
-    # 2. Symptomatic Factors (Weighted)
+    # 2. Symptomatic Factors (Structured)
     symptoms = structured_features.get("symptoms", [])
+    symptom_risk = 0.0
     if isinstance(symptoms, list):
-        critical_symptoms = ["chest pain", "shortness of breath", "severe dizziness", "numbness"]
-        moderate_symptoms = ["fever", "persistent cough", "fatigue", "joint pain"]
+        critical_symptoms = ["chest pain", "shortness of breath", "severe dizziness", "numbness", "vision loss"]
+        moderate_symptoms = ["fever", "persistent cough", "fatigue", "joint pain", "stomach pain"]
         
         for s in symptoms:
             s_lower = s.lower()
             if any(crit in s_lower for crit in critical_symptoms):
-                risk_points += 0.35
+                symptom_risk += 0.35
             elif any(mod in s_lower for mod in moderate_symptoms):
-                risk_points += 0.15
+                symptom_risk += 0.15
             else:
-                risk_points += 0.08
+                symptom_risk += 0.08
     
-    # 3. Lifestyle & History Factors
+    risk_points += min(symptom_risk, 0.6) # Cap symptom impact
+    
+    # 3. Lifestyle & History (Structured)
     lifestyle_text = str(structured_features).lower()
+    lifestyle_risk = 0.0
     if "smoking" in lifestyle_text or "smoker" in lifestyle_text:
-        risk_points += 0.22
+        lifestyle_risk += 0.20
     if "diabetes" in lifestyle_text or "high blood sugar" in lifestyle_text:
-        risk_points += 0.25
+        lifestyle_risk += 0.22
     if "hypertension" in lifestyle_text or "high blood pressure" in lifestyle_text:
-        risk_points += 0.20
-    if "alcohol" in lifestyle_text and ("daily" in lifestyle_text or "frequent" in lifestyle_text):
-        risk_points += 0.12
+        lifestyle_risk += 0.18
     
-    # Base risk normalization (cap at 0.98)
-    base_risk = min(risk_points, 0.98)
+    risk_points += lifestyle_risk
+
+    # 4. NLP Contextual Factor (Unstructured)
+    # nlp_sentiment_score 1.0 means severe, 0.0 means mild
+    # This represents the multimodal fusion
+    nlp_impact = (nlp_sentiment_score - 0.5) * 0.4
+    risk_points += nlp_impact
+
+    # Final Risk Normalization (Sigmoid squash)
+    final_risk = 1 / (1 + math.exp(-(risk_points - 0.5) * 5))
+    risk_score = round(max(0.01, min(final_risk, 0.99)), 3)
     
-    # Add a small amount of model uncertainty (stochastic element)
-    risk_score = round(base_risk + random.uniform(-0.03, 0.03), 3)
-    risk_score = max(0.02, min(risk_score, 0.99))
-    
-    # Confidence score based on data completeness
-    confidence = 0.95
-    if len(symptoms) < 2: confidence -= 0.1
-    if not structured_features.get("age"): confidence -= 0.05
-    confidence_score = round(confidence + random.uniform(-0.02, 0.02), 2)
+    # Confidence score (Data Quality)
+    confidence = 0.92
+    if len(symptoms) < 2: confidence -= 0.15
+    if not structured_features.get("age"): confidence -= 0.1
+    confidence_score = round(max(0.65, confidence), 2)
     
     return risk_score, confidence_score

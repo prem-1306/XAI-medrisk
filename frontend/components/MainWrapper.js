@@ -54,51 +54,64 @@ export default function MainWrapper({ children }) {
   // Not logged in and not on public route - redirecting
   if (!session) return null;
 
+  // Mobile Specific Overrides
+  const navLinkStyle = {
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "center", 
+    gap: "2px",
+    fontSize: "0.7rem"
+  };
+
   return (
     <>
       <nav className="navbar">
-        <div className="nav-container">
-          <Link href="/" className="nav-brand">
-            <Activity size={22} style={{ color: "var(--primary)" }} />
-            <span>XAI-MedRisk</span>
+        <div className="nav-container" style={{ padding: "0 1.25rem" }}>
+          <Link href="/" className="nav-brand" style={{ gap: "0.5rem" }}>
+            <Activity size={20} style={{ color: "var(--primary)" }} />
+            <span style={{ fontSize: "1rem" }}>XAI-MedRisk</span>
           </Link>
 
-          <div className="nav-links">
+          <div className="nav-links" style={{ gap: "1.25rem" }}>
             <Link href="/" className="nav-link">
-              <LayoutDashboard size={16} />
-              <span>Dashboard</span>
+              <div style={navLinkStyle}>
+                <LayoutDashboard size={18} />
+                <span className="hide-mobile">Dashboard</span>
+              </div>
             </Link>
             <Link href="/assess" className="nav-link">
-              <ClipboardCheck size={16} />
-              <span>New Assessment</span>
+              <div style={navLinkStyle}>
+                <ClipboardCheck size={18} />
+                <span className="hide-mobile">New Scan</span>
+              </div>
             </Link>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               {session.user?.image && (
                 <img
                   src={session.user.image}
                   alt="Avatar"
-                  style={{ width: "32px", height: "32px", borderRadius: "50%", border: "2px solid var(--primary)" }}
+                  style={{ width: "28px", height: "28px", borderRadius: "50%", border: "2px solid var(--primary)" }}
                 />
               )}
-              <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--on-surface-variant)" }}>
+              <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "var(--on-surface-variant)" }}>
                 {session.user?.name?.split(" ")[0]}
               </span>
             </div>
             <button
               onClick={() => import("next-auth/react").then(m => m.signOut({ callbackUrl: "/login" }))}
               style={{
-                display: "flex", alignItems: "center", gap: "0.4rem",
-                background: "transparent", border: "1px solid rgba(194, 198, 212, 0.3)",
-                borderRadius: "var(--radius-md)", padding: "0.4rem 0.75rem",
-                color: "var(--on-surface-variant)", cursor: "pointer", fontSize: "0.8rem",
-                fontWeight: "600", transition: "all 0.2s"
+                display: "flex", alignItems: "center", gap: "0.3rem",
+                background: "var(--surface-container-low)", border: "1px solid rgba(194, 198, 212, 0.3)",
+                borderRadius: "var(--radius-md)", padding: "0.4rem 0.6rem",
+                color: "var(--on-surface-variant)", cursor: "pointer", fontSize: "0.75rem",
+                fontWeight: "600"
               }}
             >
               <LogOut size={14} />
-              <span>Logout</span>
+              <span className="hide-mobile">Logout</span>
             </button>
           </div>
         </div>

@@ -148,8 +148,8 @@ export default function Analysis() {
               <span style={{ fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.05em', color: 'var(--secondary)' }}>XAI CONSOLE</span>
             </div>
             <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--on-surface-variant)', opacity: 0.8, lineHeight: '1.6' }}>
-              &gt; Handshake established with Gemini v3.1...<br/>
-              &gt; {bodyLocations.length > 0 ? `Targeting anatomical markers: ${bodyLocations.join(', ')}` : 'Waiting for biometric mapping...'}
+              &gt; Handshake established with XAI-MedRisk Engine...<br/>
+              &gt; {bodyLocations.length > 0 ? `Targeting multimodal markers: ${bodyLocations.join(', ')}` : 'Initiating biometric mapping...'}
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
+"use client";
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiClient, saveToHistory } from '../api';
-import { ShieldCheck, Cpu, Zap, Activity, Scan, AlertCircle } from 'lucide-react';
-import BodyVisualizer from '../components/BodyVisualizer';
+import { apiClient, saveToHistory } from '@/lib/api';
+import { ShieldCheck, Cpu, Scan, AlertCircle } from 'lucide-react';
+import BodyVisualizer from '@/components/BodyVisualizer';
 
-function Analysis() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const taskId = location.state?.taskId;
+export default function Analysis() {
+  const router = useRouter();
+  const [taskId, setTaskId] = useState(null);
   
   const [statusText, setStatusText] = useState('Initializing Secure Pipeline...');
   const [error, setError] = useState(null);
@@ -16,10 +16,18 @@ function Analysis() {
   const [earlyResult, setEarlyResult] = useState(null);
 
   useEffect(() => {
-    if (!taskId) {
-      navigate('/');
-      return;
+    if (typeof window !== 'undefined') {
+      const id = sessionStorage.getItem('taskId');
+      if (!id) {
+        router.push('/');
+      } else {
+        setTaskId(id);
+      }
     }
+  }, [router]);
+
+  useEffect(() => {
+    if (!taskId) return;
 
     const pulseInterval = setInterval(() => setPulse(p => !p), 1000);
 
@@ -54,8 +62,13 @@ function Analysis() {
           setStatusText('Analysis Complete. Generating Report...');
           // Persist result to local history for dashboard
           saveToHistory(data.result);
+          
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('current_result', JSON.stringify(data.result));
+          }
+          
           setTimeout(() => {
-            navigate('/explain', { state: { result: data.result } });
+            router.push('/explain');
           }, 1500);
         } else if (data.status === 'failed') {
           clearInterval(pollTask);
@@ -70,7 +83,7 @@ function Analysis() {
       clearInterval(pollTask);
       clearInterval(pulseInterval);
     };
-  }, [taskId, navigate]);
+  }, [taskId, router]);
 
   const bodyLocations = earlyResult?.structured_features?.body_locations || [];
 
@@ -80,7 +93,7 @@ function Analysis() {
         <AlertCircle size={48} style={{ color: 'var(--error)', margin: '0 auto 2rem' }} />
         <h2 className="mb-4" style={{ color: 'var(--error)' }}>Analysis Interrupted</h2>
         <p className="mb-8 text-muted" style={{ maxWidth: '400px', margin: '0 auto 2.5rem' }}>{error}</p>
-        <button className="btn btn-primary" onClick={() => navigate('/assess')}>
+        <button className="btn btn-primary" onClick={() => router.push('/assess')}>
           Restart Assessment
         </button>
       </div>
@@ -161,5 +174,3 @@ function Analysis() {
     </div>
   );
 }
-
-export default Analysis;

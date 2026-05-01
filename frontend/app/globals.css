@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@800&family=Public+Sans:wght@400;600;700;800;900&display=swap');
+
 :root {
   /* Stitch Design System: The Ethereal Clinic */
   --primary: #00488d;
@@ -241,6 +243,57 @@ input:focus, select:focus, textarea:focus {
   padding: 2rem;
 }
 
+.clinical-visualizer {
+  min-height: 620px;
+  height: auto;
+}
+
+.explain-visualizer-container .clinical-visualizer {
+  min-height: 750px;
+}
+
+@media (max-width: 768px) {
+  .clinical-visualizer {
+    height: 500px !important;
+    padding: 1.5rem !important;
+  }
+  
+  .clinical-visualizer .detection-text {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .clinical-visualizer {
+    height: 400px !important;
+    padding: 1rem !important;
+  }
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: stretch;
+}
+
+@media (max-width: 992px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analysis-visualizer-container .clinical-visualizer {
+  height: 100% !important;
+  min-height: 620px;
+}
+
+@media (max-width: 768px) {
+  .analysis-visualizer-container .clinical-visualizer {
+    min-height: 500px;
+  }
+}
+
 .analysis-loader {
   position: relative;
   width: 120px;
@@ -316,51 +369,6 @@ input:focus, select:focus, textarea:focus {
   background: linear-gradient(90deg, var(--secondary), #2ed573);
 }
 
-/* Markdown Report Styling */
-.markdown-report p { margin-bottom: 1.25rem; }
-.markdown-report strong { color: var(--primary); font-weight: 800; }
-.markdown-report ul, .markdown-report ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
-.markdown-report li { margin-bottom: 0.5rem; }
-.markdown-report blockquote { border-left: 4px solid var(--primary-container); padding-left: 1rem; font-style: italic; color: var(--on-surface-variant); }
-.analysis-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.explain-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 2.5rem;
-  align-items: start;
-}
-
-/* Clinical Report Components */
-.vital-mini-card {
-  background: var(--surface-container-lowest);
-  padding: 1rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--outline-variant);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.vital-mini-card label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  color: var(--on-surface-variant);
-  margin-bottom: 0;
-  opacity: 0.8;
-}
-
-.vital-mini-card span {
-  font-size: 1.125rem;
-  font-weight: 900;
-  color: var(--primary);
-}
-
 /* Professional Print Styles */
 @media print {
   body {
@@ -378,69 +386,121 @@ input:focus, select:focus, textarea:focus {
     padding: 0 !important;
     margin: 0 !important;
   }
-  
-  .clinical-header h1 {
-    color: black !important;
-  }
-  
-  .clinical-explanation-box {
-    background: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
-    break-inside: avoid;
-  }
-  
-  .shap-container {
-    break-inside: avoid;
-  }
-  
-  .card {
-    border: 1px solid #eee !important;
-    box-shadow: none !important;
-  }
-}
-
-.MedicalRoadmap_container {
-  /* Ensure roadmap is hidden in print if desired, but user wants professional report */
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+  :root {
+    --radius-xl: 0.75rem;
+  }
+
   .app-container {
-    padding: 0 1rem;
+    padding: 0 1.25rem;
   }
   
   .header {
-    padding: 1.5rem 0;
-    margin-bottom: 2rem;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .header .brand span {
+    display: none; /* Hide 'XAI-MedRisk' text on very small screens to save space */
+  }
+
+  .header nav {
+    gap: 0.5rem !important;
+  }
+
+  .header .btn {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  .header .btn span {
+    display: none; /* Hide button text, show only icons on mobile header */
   }
   
-  .grid-2 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
   
   .card {
-    padding: 1.5rem;
+    padding: 1.5rem !important;
+    margin-bottom: 1rem !important;
   }
   
-  h1 { font-size: 1.75rem !important; }
+  h1 { font-size: 2rem !important; }
   h2 { font-size: 1.5rem !important; }
-  
-  /* Analysis Page Specifics */
-  .analysis-grid {
-    grid-template-columns: 1fr !important;
-    gap: 2rem;
-  }
-  
-  .analysis-visualizer-container {
-    order: -1; /* Show body scan at the top on mobile */
+  p { font-size: 0.95rem !important; }
+
+  /* Dashboard specific mobile tweaks */
+  .dashboard-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+    margin-bottom: 2.5rem !important;
   }
 
-  .explain-grid {
-     grid-template-columns: 1fr !important;
-     gap: 2rem;
+  .dashboard-header .btn-primary {
+    width: 100%;
+    padding: 1rem !important;
   }
+
+  .assessment-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+    padding: 1.5rem !important;
+  }
+
+  .assessment-card .record-info {
+    width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid var(--outline-variant);
+    padding-right: 0 !important;
+    padding-bottom: 1rem !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 1.5rem !important;
+    text-align: left !important;
+  }
+
+  .assessment-card .status-area {
+    width: 100%;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+  }
+
+  /* Explain page mobile tweaks */
+  .explain-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .clinical-header {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    text-align: left !important;
+  }
+
+  .clinical-header div:last-child {
+    text-align: left !important;
+  }
+
+  .vital-mini-card {
+    padding: 0.75rem !important;
+  }
+
+  .vital-mini-card span {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.75rem !important; }
+  .header .brand { font-size: 1.25rem; }
 }

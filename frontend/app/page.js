@@ -1,11 +1,12 @@
+"use client";
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Plus, Clock, Activity, Calendar, Zap, Shield, ChevronRight } from 'lucide-react';
-import { getHistory } from '../api';
+import { getHistory } from '@/lib/api';
 
-function Dashboard() {
-  const navigate = useNavigate();
+export default function Dashboard() {
+  const router = useRouter();
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -35,13 +36,20 @@ function Dashboard() {
     }
   };
 
+  const handleNavigateToExplain = (record) => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('current_result', JSON.stringify(record));
+      router.push('/explain');
+    }
+  };
+
   return (
     <motion.div 
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
+      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
         <div>
           <motion.h1 
             initial={{ opacity: 0, x: -20 }}
@@ -60,14 +68,14 @@ function Dashboard() {
           whileTap={{ scale: 0.95 }}
           className="btn btn-primary"
           style={{ padding: '1.2rem 2.5rem', borderRadius: 'var(--radius-xl)' }}
-          onClick={() => navigate('/assess')}
+          onClick={() => router.push('/assess')}
         >
           <Plus size={24} />
-          New Diagnostic Scan
+          <span>New Diagnostic Scan</span>
         </motion.button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginBottom: '5rem' }}>
+      <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginBottom: '5rem' }}>
         {[
           { icon: <Activity />, label: 'Analysis History', value: history.length, color: 'var(--primary)' },
           { icon: <Shield />, label: 'Encryption Status', value: 'Active', color: 'var(--secondary)' },
@@ -101,7 +109,7 @@ function Dashboard() {
           <p style={{ color: 'var(--on-surface-variant)', marginBottom: '2.5rem', maxWidth: '350px', margin: '0 auto 2.5rem' }}>
             Your clinical history is empty. Start a new diagnostic scan to generate your first health report.
           </p>
-          <button className="btn btn-outline" onClick={() => navigate('/assess')}>
+          <button className="btn btn-outline" onClick={() => router.push('/assess')}>
             Begin Assessment
           </button>
         </motion.div>
@@ -116,11 +124,11 @@ function Dashboard() {
                 key={idx} 
                 variants={cardVariants}
                 whileHover={{ x: 10, backgroundColor: 'var(--surface-container-low)' }}
-                className="card" 
+                className="card assessment-card" 
                 style={{ cursor: 'pointer', padding: '1.5rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 0 }} 
-                onClick={() => navigate('/explain', { state: { result: record } })}
+                onClick={() => handleNavigateToExplain(record)}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+                <div className="record-info" style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
                   <div style={{ textAlign: 'center', paddingRight: '3rem', borderRight: '1px solid var(--outline-variant)' }}>
                     <div style={{ fontSize: '1.25rem', fontWeight: '900' }}>{date.getDate()}</div>
                     <div style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--on-surface-variant)' }}>
@@ -137,7 +145,7 @@ function Dashboard() {
                   </div>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4rem' }}>
+                <div className="status-area" style={{ display: 'flex', alignItems: 'center', gap: '4rem' }}>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>RISK FACTOR</div>
                     <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{(record.risk_score * 100).toFixed(0)}%</div>
@@ -155,5 +163,3 @@ function Dashboard() {
     </motion.div>
   );
 }
-
-export default Dashboard;

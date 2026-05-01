@@ -1,6 +1,7 @@
+"use client";
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { apiClient } from '../api';
+import { useRouter } from 'next/navigation';
+import { apiClient } from '@/lib/api';
 import { ChevronRight, ClipboardList, Info, Send, Sparkles, User, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -9,8 +10,8 @@ const COMMON_SYMPTOMS = [
   'Cough', 'Shortness of breath', 'Nausea', 'Body aches'
 ];
 
-function InputForm() {
-  const navigate = useNavigate();
+export default function InputForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
@@ -150,7 +151,10 @@ ${extraInfo}
       });
       
       if (response.data.task_id) {
-        navigate('/analysis', { state: { taskId: response.data.task_id } });
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('taskId', response.data.task_id);
+          router.push('/analysis');
+        }
       }
     } catch (err) {
       setError('Final analysis submission failed.');
@@ -203,44 +207,44 @@ ${extraInfo}
             exit={{ opacity: 0 }}
             style={{ 
               position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-              background: 'rgba(242, 243, 249, 0.85)', backdropFilter: 'blur(12px)', 
-              zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' 
+              background: 'rgba(242, 243, 249, 0.95)', backdropFilter: 'blur(16px)', 
+              zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' 
             }}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="card"
-              style={{ maxWidth: '650px', width: '100%', border: '2px solid var(--primary)', padding: '0', overflow: 'hidden' }}
+              className="card consultation-overlay"
+              style={{ maxWidth: '650px', width: '100%', border: '2px solid var(--primary)', padding: '0', overflow: 'hidden', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}
             >
               {/* Header */}
-              <div style={{ background: 'var(--surface-container-low)', padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid var(--outline-variant)' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--primary-container))', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Activity size={24} />
+              <div className="consultation-header" style={{ background: 'var(--surface-container-low)', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid var(--outline-variant)', flexShrink: 0 }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--primary-container))', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Activity size={20} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '1.25rem', margin: 0, color: 'var(--primary)' }}>Virtual Dr. AI</h2>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--on-surface-variant)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ width: '8px', height: '8px', background: 'var(--secondary)', borderRadius: '50%', display: 'inline-block' }}></span>
-                    Clinical Assessment in Progress ({consultation.currentIdx + 1} of {consultation.questions.length})
+                  <h2 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--primary)' }}>Virtual Dr. AI</h2>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--on-surface-variant)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ width: '6px', height: '6px', background: 'var(--secondary)', borderRadius: '50%', display: 'inline-block' }}></span>
+                    Consultation ({consultation.currentIdx + 1} of {consultation.questions.length})
                   </div>
                 </div>
               </div>
 
               {/* Chat Body */}
-              <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', flex: 1 }}>
                 
                 {/* AI Bubble */}
                 <motion.div 
                   key={`q-${consultation.currentIdx}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}
+                  style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}
                 >
-                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--surface-container-low)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                     <Sparkles size={18} />
+                   <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--surface-container-low)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                     <Sparkles size={16} />
                    </div>
-                   <div style={{ background: 'var(--surface-container-low)', padding: '1.25rem', borderRadius: '0 1rem 1rem 1rem', fontSize: '1.05rem', lineHeight: '1.6', color: 'var(--on-surface)', border: '1px solid rgba(0, 72, 141, 0.1)' }}>
+                   <div style={{ background: 'var(--surface-container-low)', padding: '1rem', borderRadius: '0 1rem 1rem 1rem', fontSize: '1rem', lineHeight: '1.5', color: 'var(--on-surface)', border: '1px solid rgba(0, 72, 141, 0.1)' }}>
                      {consultation.questions[consultation.currentIdx]}
                    </div>
                 </motion.div>
@@ -250,17 +254,17 @@ ${extraInfo}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginTop: '1rem' }}
+                  style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end', marginTop: 'auto' }}
                 >
                   <div style={{ flex: 1, position: 'relative' }}>
                     <textarea 
                       autoFocus
                       rows={2}
-                      placeholder="Type your response to the doctor..."
+                      placeholder="Response..."
                       style={{ 
-                        width: '100%', padding: '1rem', borderRadius: '1rem 1rem 0 1rem', 
+                        width: '100%', padding: '0.8rem 1rem', borderRadius: '1rem 1rem 0 1rem', 
                         border: '1px solid var(--outline-variant)', background: 'white',
-                        resize: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+                        resize: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', fontSize: '1rem'
                       }}
                       value={consultation.currentAnswer}
                       onChange={(e) => setConsultation({...consultation, currentAnswer: e.target.value})}
@@ -274,20 +278,20 @@ ${extraInfo}
                   </div>
                   <button 
                     className="btn btn-primary" 
-                    style={{ borderRadius: '50%', width: '54px', height: '54px', padding: 0, flexShrink: 0 }}
+                    style={{ borderRadius: '50%', width: '48px', height: '48px', padding: 0, flexShrink: 0 }}
                     onClick={handleNextQuestion} 
                     disabled={!consultation.currentAnswer.trim()}
                   >
-                    <Send size={20} />
+                    <Send size={18} />
                   </button>
                 </motion.div>
                 
-                <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+                <div style={{ textAlign: 'center' }}>
                    <button 
                      onClick={handleSkipConsultation}
-                     style={{ background: 'none', border: 'none', color: 'var(--on-surface-variant)', fontSize: '0.85rem', textDecoration: 'underline', cursor: 'pointer', opacity: 0.7 }}
+                     style={{ background: 'none', border: 'none', color: 'var(--on-surface-variant)', fontSize: '0.75rem', textDecoration: 'underline', cursor: 'pointer', opacity: 0.7 }}
                    >
-                     Skip remaining questions & generate report
+                     Skip and generate report
                    </button>
                 </div>
 
@@ -484,5 +488,3 @@ ${extraInfo}
     </div>
   );
 }
-
-export default InputForm;

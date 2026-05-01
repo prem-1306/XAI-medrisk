@@ -1,13 +1,23 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+"use client";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Activity, ArrowLeft, Download, Info, Zap, AlertCircle, CheckCircle2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import BodyVisualizer from '../components/BodyVisualizer';
+import BodyVisualizer from '@/components/BodyVisualizer';
 
-function ExplainableAI() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const result = location.state?.result;
+export default function ExplainableAI() {
+  const router = useRouter();
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = sessionStorage.getItem('current_result');
+      if (stored) {
+        setResult(JSON.parse(stored));
+      }
+    }
+  }, []);
 
   if (!result) {
     return (
@@ -15,7 +25,7 @@ function ExplainableAI() {
         <AlertCircle size={48} style={{ color: 'var(--error)', margin: '0 auto 2rem' }} />
         <h2>Data Synchronicity Lost</h2>
         <p className="mb-8 text-muted">We couldn't retrieve the session data. Please start a new scan.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/assess')}>
+        <button className="btn btn-primary" onClick={() => router.push('/assess')}>
           Restart Assessment
         </button>
       </div>
@@ -38,19 +48,19 @@ function ExplainableAI() {
 
   return (
     <div className="page-transition">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
-        <button className="btn btn-outline" style={{ border: 'none', paddingLeft: 0 }} onClick={() => navigate('/')}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <button className="btn btn-outline" style={{ border: 'none', paddingLeft: 0 }} onClick={() => router.push('/')}>
           <ArrowLeft size={18} />
-          Back to Overview
+          <span>Back to Overview</span>
         </button>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button className="btn btn-outline" onClick={() => window.print()}>
             <Download size={18} />
-            Export PDF
+            <span>Export PDF</span>
           </button>
-          <div className="btn" style={{ background: 'var(--secondary-container)', color: 'var(--secondary)', cursor: 'default' }}>
-            <CheckCircle2 size={18} />
-            Verified Report
+          <div className="btn" style={{ background: 'var(--secondary-container)', color: 'var(--secondary)', cursor: 'default', padding: '0.5rem 1rem' }}>
+            <CheckCircle2 size={16} />
+            <span>Verified Report</span>
           </div>
         </div>
       </div>
@@ -70,15 +80,15 @@ function ExplainableAI() {
                 <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem', color: 'var(--primary)', letterSpacing: '-0.02em' }}>
                   {prediction.structured_features?.name || 'Patient Report'}
                 </h1>
-                <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--on-surface-variant)', fontSize: '0.95rem' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: 'var(--on-surface-variant)', fontSize: '0.95rem' }}>
                   <span>Age: <strong style={{color: 'var(--on-surface)'}}>{prediction.structured_features?.age || 'N/A'}</strong></span>
                   <span>Gender: <strong style={{color: 'var(--on-surface)'}}>{prediction.structured_features?.gender || 'N/A'}</strong></span>
-                  <span>Patient ID: <strong style={{color: 'var(--on-surface)'}}>#{result.id?.substring(0,8) || 'XAI-492'}</strong></span>
+                  <span>ID: <strong style={{color: 'var(--on-surface)'}}>#{result.id?.substring(0,8) || 'XAI-492'}</strong></span>
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
+              <div>
                 <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--on-surface-variant)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-                  Risk Probability
+                  RISK PROBABILITY
                 </div>
                 <div style={{ fontSize: '2.5rem', fontWeight: '900', color: getRiskColor(riskScore) }}>
                   {(riskScore * 100).toFixed(1)}%
@@ -87,7 +97,7 @@ function ExplainableAI() {
             </div>
 
             {/* Vitals Summary Strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
               <div className="vital-mini-card">
                 <label>BMI</label>
                 <span>{prediction.structured_features?.bmi || 'N/A'}</span>
@@ -102,12 +112,12 @@ function ExplainableAI() {
               </div>
             </div>
 
-            <div className="clinical-explanation-box" style={{ padding: '2rem', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', borderLeft: `6px solid ${getRiskColor(riskScore)}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', color: getRiskColor(riskScore), fontWeight: '800', letterSpacing: '0.05em' }}>
-                <Activity size={20} />
+            <div className="clinical-explanation-box" style={{ padding: '1.5rem', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', borderLeft: `6px solid ${getRiskColor(riskScore)}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', color: getRiskColor(riskScore), fontWeight: '800', letterSpacing: '0.05em', fontSize: '0.85rem' }}>
+                <Activity size={18} />
                 PROFESSIONAL ASSESSMENT
               </div>
-              <div className="markdown-report" style={{ fontSize: '1.05rem', lineHeight: '1.8', color: 'var(--on-surface)' }}>
+              <div className="markdown-report" style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--on-surface)' }}>
                 <ReactMarkdown>{prediction.human_explanation}</ReactMarkdown>
               </div>
             </div>
@@ -160,7 +170,7 @@ function ExplainableAI() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="card" 
+            className="card explain-visualizer-container" 
             style={{ padding: '2rem', background: 'var(--surface-container-lowest)', position: 'relative' }}
           >
             <BodyVisualizer 
@@ -210,5 +220,3 @@ function ExplainableAI() {
     </div>
   );
 }
-
-export default ExplainableAI;

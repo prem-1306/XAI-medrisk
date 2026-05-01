@@ -1,5 +1,6 @@
+"use client";
 import { motion } from 'framer-motion';
-import { Activity, User } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 function SplashScreen() {
   return (

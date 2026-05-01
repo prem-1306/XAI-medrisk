@@ -1,28 +1,48 @@
 import google.generativeai as genai
 from app.core.config import settings
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
-
-# Use gemini-2.5-flash-lite for the highest free tier limit (1,000 requests/day)
-extraction_model = genai.GenerativeModel('gemini-2.5-flash-lite', generation_config={"temperature": 0.1})
-# Use the same model for explanation
-explanation_model = genai.GenerativeModel('gemini-2.5-flash-lite', generation_config={"temperature": 0.4})
-
 import time
 import google.api_core.exceptions
 
-def call_gemini_with_retry(model, prompt, max_retries=3):
-    """ Helper to call Gemini with exponential backoff for 429 errors. """
+# API Key Rotation Logic
+API_KEYS = [k.strip() for k in settings.GEMINI_API_KEY.split(",") if k.strip()]
+current_key_index = 0
+
+def get_current_model(model_name, temperature=0.1):
+    """ Configures and returns a model with the current active API key. """
+    global current_key_index
+    genai.configure(api_key=API_KEYS[current_key_index])
+    return genai.GenerativeModel(model_name, generation_config={"temperature": temperature})
+
+def rotate_api_key():
+    """ Switches to the next available API key in the list. """
+    global current_key_index
+    current_key_index = (current_key_index + 1) % len(API_KEYS)
+    print(f"[AI ROTATION] Switched to API Key {current_key_index + 1}/{len(API_KEYS)}")
+    genai.configure(api_key=API_KEYS[current_key_index])
+
+def call_gemini_with_retry(model_name, prompt, temperature=0.1, max_retries=None):
+    """ Calls Gemini and automatically rotates keys if quota is hit. """
+    if max_retries is None:
+        max_retries = len(API_KEYS) * 2  # Try each key twice if needed
+
     for i in range(max_retries):
         try:
+            # Re-initialize model with current key
+            model = get_current_model(model_name, temperature)
             return model.generate_content(prompt)
         except google.api_core.exceptions.ResourceExhausted as e:
-            if i == max_retries - 1:
+            print(f"[AI QUOTA] Key {current_key_index + 1} exhausted.")
+            if len(API_KEYS) > 1:
+                rotate_api_key()
+                time.sleep(1) # Small pause before retry
+            else:
                 raise e
-            wait_time = (2 ** i) + 1
-            print(f"[AI RETRY] Quota hit. Waiting {wait_time}s before retry {i+1}/{max_retries}...")
-            time.sleep(wait_time)
         except Exception as e:
+            # For other errors, wait a bit and retry
+            if i < max_retries - 1:
+                time.sleep(1)
+                continue
             raise e
 
 def extract_symptoms_from_text(text: str) -> str:
@@ -47,7 +67,7 @@ def extract_symptoms_from_text(text: str) -> str:
     
     Text: {text}
     """
-    response = call_gemini_with_retry(extraction_model, prompt)
+    response = call_gemini_with_retry('gemini-2.5-flash-lite', prompt, temperature=0.1)
     return response.text
 
 def generate_human_explanation(shap_json: str) -> str:
@@ -65,7 +85,7 @@ def generate_human_explanation(shap_json: str) -> str:
     
     SHAP Data: {shap_json}
     """
-    response = call_gemini_with_retry(explanation_model, prompt)
+    response = call_gemini_with_retry('gemini-2.5-flash-lite', prompt, temperature=0.4)
     return response.text
 
 def evaluate_input_sufficiency(text: str) -> dict:
@@ -97,7 +117,7 @@ def evaluate_input_sufficiency(text: str) -> dict:
     }}
     """
     try:
-        response = call_gemini_with_retry(extraction_model, prompt)
+        response = call_gemini_with_retry('gemini-2.5-flash-lite', prompt, temperature=0.1)
         import json
         # Clean JSON if needed
         res_text = response.text

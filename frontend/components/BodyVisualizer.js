@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -20,10 +21,9 @@ const BodyVisualizer = ({ highlightedParts = [], label = "AI Body Analysis", sho
   ];
 
   return (
-    <div className="body-visualizer-premium" style={{ 
+    <div className="body-visualizer-premium clinical-visualizer" style={{ 
       position: 'relative', 
       width: '100%', 
-      height: '620px', // Increased height for full body
       display: 'flex', 
       flexDirection: 'column', 
       alignItems: 'center', 
@@ -152,8 +152,8 @@ const BodyVisualizer = ({ highlightedParts = [], label = "AI Body Analysis", sho
                 boxShadow: '0 8px 25px rgba(186, 26, 26, 0.1)'
               }}
             >
-              <div style={{ width: '10px', height: '10px', background: '#ba1a1a', borderRadius: '50%', animation: 'pulse-red 1s infinite' }}></div>
-              DETECTION ACTIVE: {safeHighlightedParts.join(' • ').toUpperCase()}
+              <div className="detection-dot" style={{ width: '10px', height: '10px', background: '#ba1a1a', borderRadius: '50%', animation: 'pulse-red 1s infinite' }}></div>
+              <span className="detection-text">DETECTION ACTIVE: {safeHighlightedParts.join(' • ').toUpperCase()}</span>
             </motion.div>
           )}
         </AnimatePresence>

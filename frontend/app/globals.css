@@ -462,103 +462,56 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
-/* Mobile Responsiveness */
+/* --- Advanced Mobile Optimization --- */
 @media (max-width: 768px) {
   :root {
-    --radius-xl: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-lg: 0.75rem;
   }
 
-  .app-container {
-    padding: 0 1.25rem;
-  }
-  
-  .header {
-    padding: 1rem 0;
-    margin-bottom: 1.5rem;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 0.5rem;
+  body {
+    font-size: 15px;
   }
 
-  .header .brand span {
-    display: none; /* Hide 'XAI-MedRisk' text on very small screens to save space */
+  .main-content {
+    padding: 5rem 1rem 3rem; /* Tighter padding for mobile */
   }
 
-  .header nav {
-    gap: 0.5rem !important;
+  .nav-container {
+    padding: 0 1rem;
   }
 
-  .header .btn {
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.7rem !important;
-  }
-
-  .header .btn span {
-    display: none; /* Hide button text, show only icons on mobile header */
-  }
-  
-  .grid-2, .grid-3 {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
-  }
-  
-  .card {
-    padding: 1.5rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  h1 { font-size: 2rem !important; }
+  h1 { font-size: 1.85rem !important; line-height: 1.2 !important; }
   h2 { font-size: 1.5rem !important; }
-  p { font-size: 0.95rem !important; }
+  h3 { font-size: 1.25rem !important; }
 
-  /* Dashboard specific mobile tweaks */
-  .dashboard-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 1.5rem !important;
-    margin-bottom: 2.5rem !important;
+  .card {
+    padding: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+    border-radius: var(--radius-lg) !important;
   }
 
-  .dashboard-header .btn-primary {
+  /* Stack all grids */
+  .grid-2, .grid-3, .analysis-grid, .explain-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  /* Full-width buttons on mobile for better ergonomics */
+  .btn {
     width: 100%;
     padding: 1rem !important;
+    justify-content: center;
   }
 
-  .assessment-card {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 1.5rem !important;
-    padding: 1.5rem !important;
+  .nav-links .btn, .nav-brand .btn {
+    width: auto; /* Keep header buttons compact */
   }
 
-  .assessment-card .record-info {
-    width: 100%;
-    border-right: none !important;
-    border-bottom: 1px solid var(--outline-variant);
-    padding-right: 0 !important;
-    padding-bottom: 1rem !important;
-    flex-direction: row !important;
-    justify-content: flex-start !important;
-    gap: 1.5rem !important;
-    text-align: left !important;
-  }
-
-  .assessment-card .status-area {
-    width: 100%;
-    justify-content: space-between !important;
-    gap: 1rem !important;
-  }
-
-  /* Explain page mobile tweaks */
-  .explain-grid {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem !important;
-  }
-
+  /* Specific fix for the explain page items */
   .clinical-header {
     flex-direction: column !important;
     gap: 1rem !important;
-    text-align: left !important;
   }
 
   .clinical-header div:last-child {
@@ -566,15 +519,31 @@ input:focus, select:focus, textarea:focus {
   }
 
   .vital-mini-card {
-    padding: 0.75rem !important;
+    padding: 1rem !important;
   }
 
   .vital-mini-card span {
-    font-size: 1rem !important;
+    font-size: 1.125rem !important;
+  }
+
+  /* Responsive Visualizer */
+  .body-visualizer-container {
+    padding: 1rem !important;
+    min-height: 450px;
+  }
+
+  .clinical-visualizer {
+    height: 400px !important;
+  }
+
+  /* Results bars padding */
+  .shap-row {
+    margin-bottom: 1rem;
   }
 }
 
+/* Extra small devices */
 @media (max-width: 480px) {
-  h1 { font-size: 1.75rem !important; }
-  .header .brand { font-size: 1.25rem; }
+  h1 { font-size: 1.6rem !important; }
+  .nav-brand span { font-size: 0.9rem !important; }
 }

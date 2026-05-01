@@ -11,7 +11,7 @@ services:
     ipAllowList: [] # Secures Redis to internal network only
 
   - type: web
-    name: xaimedrisk-api
+    name: xai-clinical-api
     env: docker
     plan: free
     dockerContext: ./backend
@@ -35,7 +35,7 @@ services:
         sync: false 
 
   - type: web
-    name: xaimedrisk-frontend
+    name: xai-clinical-frontend
     env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/out

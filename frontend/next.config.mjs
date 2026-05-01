@@ -5,6 +5,9 @@ const nextConfig = {
     unoptimized: true,
   },
   transpilePackages: ['react-markdown', 'remark-parse', 'unified', 'vfile', 'unist-util-visit'],
+  experimental: {
+    esmExternals: false,
+  },
 };
 
 export default nextConfig;

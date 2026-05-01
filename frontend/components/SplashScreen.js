@@ -99,8 +99,11 @@ function SplashScreen() {
         
         <div style={{ 
           display: 'flex', 
-          flexDirection: 'column', 
-          gap: '0.75rem'
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '0.4rem 1.5rem',
+          maxWidth: '320px'
         }}>
           {[
             'Shivam Gupta',
@@ -108,21 +111,21 @@ function SplashScreen() {
             'Prathamesh Gupta',
             'Prem Gupta'
           ].map((name, i) => (
-            <motion.div 
+            <motion.span
               key={name}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 + (i * 0.1), duration: 0.8 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 + (i * 0.1), duration: 0.6 }}
               style={{ 
-                fontSize: '1.5rem', 
-                fontWeight: 900, 
-                color: 'var(--on-surface)',
-                letterSpacing: '-0.02em',
-                lineHeight: 1
+                fontSize: '0.75rem', 
+                fontWeight: 600, 
+                color: 'var(--on-surface-variant)',
+                letterSpacing: '0.02em',
+                opacity: 0.7
               }}
             >
               {name}
-            </motion.div>
+            </motion.span>
           ))}
         </div>
       </motion.div>

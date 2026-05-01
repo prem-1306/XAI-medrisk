@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Activity, LayoutDashboard, ClipboardCheck } from 'lucide-react';
 import Link from 'next/link';
 import { AnimatePresence } from "framer-motion";
-import SplashScreen from "@/components/SplashScreen";
+import SplashScreen from "./SplashScreen";
 
 export default function MainWrapper({ children }) {
   const [showSplash, setShowSplash] = useState(true);
